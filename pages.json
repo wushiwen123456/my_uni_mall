@@ -7,7 +7,10 @@
 				"navigationBarTitleText":"my_mall",
 				// "navigationStyle":"custom",
 				// #endif
+				"disableScroll":true,
 				"app-plus":{
+					"scrollIndicator":"none",
+					"bounce":"none",
 					"titleNView":{
 						"type":"transparent",
 						"searchInput":{
@@ -44,6 +47,7 @@
 		    "style" : {
 				"navigationBarTitleText":"分类",
 				"app-plus":{
+					"scrollIndicator":"none",
 					"bounce":"none"
 				}
 			}
@@ -52,7 +56,10 @@
         ,{
             "path" : "pages/cart/cart",
             "style" : {
-				"navigationBarTitleText":"购物车"
+				"navigationBarTitleText":"购物车",
+				"app-plus":{
+					"scrollIndicator":"none"
+				}
 			}
         }
         ,{
@@ -65,8 +72,7 @@
 				"app-plus":{
 					"bounce":"none",
 					"titleNView":{
-						"type":"default",
-						"backgroundColor":"rgba(0,0,0,.5)",
+						"type":"transparent",
 						"buttons":[
 							{
 								"fontSrc":"/static/yticon.ttf",
@@ -94,6 +100,7 @@
 		    "style" : {
 				"navigationBarTitleText":"详情展示",
 				"app-plus":{
+					"scrollIndicator":"none",
 					"titleNView":{
 						"type":"transparent"
 					}
@@ -102,11 +109,19 @@
 		}
 		,{
             "path" : "pages/set/set",
-            "style" : {}
+            "style" : {
+				"app-plus":{ 
+					"scrollIndicator":"none"
+				}
+			}
         }
         ,{
             "path" : "pages/userInfo/userInfo",
-            "style" : {}
+            "style" : {
+				"app-plus":{
+					"scrollIndicator":"none"
+				}
+			}
         }
         ,{
            "path": "pages/public/login",
@@ -115,13 +130,18 @@
            	"navigationStyle": "custom",
            	"app-plus": {
            		"titleNView": false,
-           		"animationType": "slide-in-bottom"
+           		"animationType": "slide-in-bottom",
+				"scrollIndicator":"none"
            	}
            }
         }
         ,{
             "path" : "pages/order/order",
-            "style" : {}
+            "style" : {
+				"app-plus":{
+					"scrollIndicator":"none"
+				}
+			}
         }
         ,{
             "path" : "pages/money/money",
@@ -130,7 +150,13 @@
         ,{
             "path" : "pages/order/createOrder/createOrder",
             "style" : {}
-        }
+        },
+       {
+       	"path": "pages/profile/childsCpms/myWuliu",
+       	"style": {
+       		"navigationBarTitleText": "物流跟踪"
+		}
+       }
     ],
 	"globalStyle":{
 		"navigationBarTextStyle":"black",
@@ -166,5 +192,6 @@
 			}
 			
 		]
+		
 	}
 }

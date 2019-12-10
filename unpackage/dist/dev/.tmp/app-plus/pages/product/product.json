@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "详情展示",
+  "scrollIndicator": "none",
+  "titleNView": {
+    "type": "transparent"
+  },
+  "usingComponents": {}
+}

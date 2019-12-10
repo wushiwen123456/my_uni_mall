@@ -1,4 +1,6 @@
 <template>
+	<mescroll-uni ref="mes" @down="downCallback" @up="upCallback" :up="upOption" :down="downOption">
+
 	<view class="container">
 		<!-- 小程序兼容头部 -->
 		<!-- #ifdef MP -->
@@ -138,7 +140,21 @@
 			<text class="yticon icon-you"></text>
 		</view>
 		
-		<!-- 分类开始-->
+		
+		
+
+		<!-- <QSTabs
+			:current="current" 
+			animationMode="line2" 
+			activeColor="#CD3233" 
+			autoCenterMode="window" 
+			defaultStyle="#525253"	
+			:tabs="tabs_3" 
+			width="150" 
+			@change="change($event, '3')"
+		/> -->
+		
+		<!-- 分类精选-->
 		<view class="hot-floor">
 			<view class="floor-img-box">
 				<image class="floor-img" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553409398864&di=4a12763adccf229133fb85193b7cc08f&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201703%2F19%2F20170319150032_MNwmn.jpeg" mode="scaleToFill"></image>
@@ -218,29 +234,46 @@
 		<view class="f-header m-t">
 			<image src="/static/temp/h1.png"></image>
 			<view class="tit-box">
-				<text class="tit">分类精选</text>
+				<text class="tit">猜你喜欢</text>
 				<text class="tit2">Competitive Products For You</text>
 			</view>
 			<text class="yticon icon-you"></text>
 		</view>
+		
+		
+		<!-- Tab选项卡开始 -->
+		<view class="tabs">
+			<QSTabs :tabs="tabs" width="250" animationMode="line2" defaultColor="#404040" :hasItemBackground="true" autoCenterMode="window" :autoCenter="false" :current="current" activeColor="#ff6990" @change="change" backgroundColor="#fff" />
+		</view>
+		<!-- Tab选项卡结束 -->
+		
 		<view class="guess-section">
 			<view
-				v-for="(item,index) in goodsList" :key="index"
+				v-for="(item,index) in getList" :key="index"
 				class="guess-item"
 				@click="navToDetailPage(item)"
+				v-if="getList.length"
 			>
 				<view class="image-wrapper">
-					<image :src="item.image" mode="aspectFill"></image>
+					<image :src="item.show.img" mode="aspectFill"></image>
 				</view>
 				<text class="title clamp">{{item.title}}</text>
 				<text class="price">¥ {{item.price}}</text>
 			</view>
 		</view>
 	</view>
+
+	</mescroll-uni>
 </template>
 
 <script>
 	import uniCountdown from "@/components/uni-countdown/uni-countdown" 
+	import MescrollUni from "@/components/mescroll-uni/mescroll-uni.vue";
+	import QSTabs from '@/components/QS-tabs/QS-tabs'
+	
+	// 导入网络方法
+	import { getHomeData } from "@/network/home"
+	
 	export default {
 		data(){
 			return {
@@ -248,11 +281,54 @@
 				swiperCurrent:0,
 				swiperLength:0,
 				carouselList:[],
-				goodsList:[]
+				goodsList:[],//静态数据
+				goodsListNet:{//网路数据
+					'pop':{
+						pop:[],
+						hasNext:true
+					},
+					'new':{
+						new:[],
+						hasNext:true
+					},
+					'sell':{
+						sell:[],
+						hasNext:true
+					},
+					
+				},
+				// 下拉刷新的常用配置
+				downOption: { 
+					use: true, // 是否启用下拉刷新; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行下拉刷新的回调; 默认true
+				},
+				// 上拉加载的常用配置
+				upOption: {
+					use: true, // 是否启用上拉加载; 默认true
+					auto: true, // 是否在初始化完毕之后自动执行上拉加载的回调; 默认true
+					page: {
+						num: 0, // 当前页码,默认0,回调之前会加1,即callback(page)会从1开始
+						size: 30 // 每页数据的数量,默认10
+					},
+					noMoreSize: 5, // 配置列表的总数量要大于等于5条才显示'-- END --'的提示
+					empty: {
+						tip: '暂无相关数据'
+					},
+					textNoMore:'-- 我是有底线的 --'
+				},
+				hasNext:true, //判断是否有下一页
+				// tab标签控制
+				current:0 ,//当前选项卡
+				tabs:[
+					'流行','新款','精选' //tab标签
+				],
+				getList:[]
 			}
 		},
 		components:{
-			uniCountdown
+			uniCountdown,
+			MescrollUni,
+			QSTabs
 		},
 		onLoad() {
 			this.loadData()
@@ -280,6 +356,46 @@
 					title:title,
 					icon:"none"
 				})
+			},
+			/*下拉刷新的回调 */
+			downCallback(mescroll) {
+				// 这里加载你想下拉刷新的数据, 比如刷新轮播数据
+				// this.loadData()
+				// 下拉刷新的回调,默认重置上拉加载列表为第一页 (自动执行 mescroll.num=1, 再触发upCallback方法 )
+				mescroll.resetUpScroll()
+			},
+			/*上拉加载的回调: mescroll携带page的参数, 其中num:当前页 从1开始, size:每页数据条数,默认10 */
+			upCallback(mescroll) {
+				let pageNum = mescroll.num //页码，默认从1开始
+				let pageSize = mescroll.size// 页长, 默认每页10条
+				let currentTab = Object.keys( this.goodsListNet)[this.current]
+				//联网加载数据
+				getHomeData(currentTab,mescroll.num,true).then(res =>{
+					const list = res.data.data.list
+					if(list.length < 30) {
+						this.goodsListNet[currentTab].hasNext = false
+					}else{
+						this.goodsListNet[currentTab].hasNext = true
+					}
+					
+					if(mescroll.num == 1) this.goodsListNet[currentTab][currentTab] = []
+					this.goodsListNet[currentTab][currentTab] = this.goodsListNet[currentTab][currentTab].concat(list)				
+					mescroll.endSuccess(list.length, this.goodsListNet[currentTab].hasNext); 
+					this.getList = this.goodsListNet[currentTab][currentTab]
+				}).catch((err) => {
+					// 失败隐藏下拉加载状态
+					mescroll.endErr()
+				})
+			},
+			// tab选项卡点击事件
+			change(e){
+				this.current = e
+				this.$refs.mes.mescroll.resetUpScroll()
+			}
+		},
+		computed:{
+			getListGoods(){
+				return false
 			}
 		}
 	}
@@ -694,5 +810,8 @@
 			color: $uni-color-primary;
 			line-height: 1;
 		}
+	}
+	.tabs{
+		padding: 20upx 15upx;
 	}
 </style>	

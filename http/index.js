@@ -1,11 +1,13 @@
 const http = (options) => {
 	console.log(options)
 	return new Promise((resolve,reject) => {
-		uni.showLoading({
-			title:'加载中...',
-			// 是否显示透明蒙层，防止触摸穿透，默认：false
-			mask:true
-		})
+		if(!options.showModal){
+			uni.showLoading({
+				title:'加载中...',
+				// 是否显示透明蒙层，防止触摸穿透，默认：false
+				mask:true
+			})
+		}
 		uni.request({
 			method:options.method,
 			url:options.url,
@@ -30,7 +32,10 @@ const http = (options) => {
 				}
 			},
 			complete:() => {
-				uni.hideLoading()
+				if(!options.showModal){
+					uni.hideLoading()
+				}
+				
 			}
 		})
 	})

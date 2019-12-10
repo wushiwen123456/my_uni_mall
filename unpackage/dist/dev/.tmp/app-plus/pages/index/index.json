@@ -1,0 +1,38 @@
+{
+  "disableScroll": true,
+  "scrollIndicator": "none",
+  "bounce": "none",
+  "titleNView": {
+    "type": "transparent",
+    "searchInput": {
+      "backgroundColor": "rgba(231,231,231,.7)",
+      "borderRadius": "16px",
+      "placeholder": "请输入文字",
+      "disabled": true,
+      "placeholderColor": "#606266"
+    },
+    "buttons": [
+      {
+        "fontSrc": "/static/yticon.ttf",
+        "text": "",
+        "fontSize": "26",
+        "color": "#303133",
+        "float": "left",
+        "background": "rgba(0,0,0,0)"
+      },
+      {
+        "fontSrc": "/static/yticon.ttf",
+        "text": "",
+        "fontSize": "27",
+        "color": "#303133",
+        "background": "rgba(0,0,0,0)",
+        "redDot": true
+      }
+    ]
+  },
+  "usingComponents": {
+    "uni-countdown": "/components/uni-countdown/uni-countdown",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "q-s-tabs": "/components/QS-tabs/QS-tabs"
+  }
+}
